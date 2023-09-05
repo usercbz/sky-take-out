@@ -7,6 +7,9 @@ import com.sky.constant.MessageConstant;
 import com.sky.dto.CategoryDTO;
 import com.sky.dto.CategoryPageQueryDTO;
 import com.sky.entity.Category;
+import com.sky.entity.Dish;
+import com.sky.entity.Setmeal;
+import com.sky.exception.DeletionNotAllowedException;
 import com.sky.mapper.CategoryMapper;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
@@ -16,6 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static com.sky.constant.MessageConstant.CATEGORY_BE_RELATED_BY_SETMEAL_OR_DISH;
+import static com.sky.constant.MessageConstant.UNKNOWN_ERROR;
 
 @Service
 public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> implements CategoryService {
@@ -113,8 +119,19 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
     @Override
     public Result<String> removeCategoryById(Long id) {
         //查询是否有菜品或套餐有对它的引用
-//        dishService.queryByCategoryId(id);
-        return null;
+        List<Dish> dishes = dishService.getDishByCategoryId(id);
+        List<Setmeal> setmeals = setmealService.getSetmealByCategoryId(id);
+
+        if (dishes.size() != 0 || setmeals.size() != 0) {
+            throw new DeletionNotAllowedException(CATEGORY_BE_RELATED_BY_SETMEAL_OR_DISH);
+        }
+
+        //删除
+        if (!removeById(id)) {
+            return Result.error(UNKNOWN_ERROR);
+        }
+
+        return Result.success();
     }
 
 }
