@@ -19,7 +19,7 @@ public class CommonController {
     @Autowired
     private AliOssUtil aliOssUtil;
 
-    @PostMapping
+    @PostMapping("upload")
     public Result<String> upload(MultipartFile file) {
         String filename = file.getOriginalFilename();
         assert filename != null;
