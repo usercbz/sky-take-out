@@ -30,4 +30,10 @@
                  left join dish_flavor df on dish.id = df.dish_id
         where dish.id = #{id}
     </select>
+    <select id="getDishesByCategoryId" resultMap="dishVo">
+        select *
+        from dish
+                 left join dish_flavor df on dish.id = df.dish_id
+        where dish.category_id = #{categoryId}
+    </select>
 </mapper>

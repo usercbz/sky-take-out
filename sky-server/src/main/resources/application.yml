@@ -37,12 +37,22 @@ logging:
 sky:
   jwt:
     # 设置jwt签名加密时使用的秘钥
-    admin-secret-key: itcast
+    admin-secret-key: cbz
     # 设置jwt过期时间
     admin-ttl: 7200000
     # 设置前端传递过来的令牌名称
     admin-token-name: token
 
+    user-secret-key: cbz
+    user-ttl: 7200000
+    user-token-name: authentication
+
+  # 阿里云OSS配置
   alioss:
     endpoint: oss-cn-guangzhou.aliyuncs.com
     bucket-name: cbz-storage-space
+
+  # 微信小程序配置
+  wechat:
+    appid: wx34b67fbd8a261eca
+    secret: a31aa888967f01db009fe7d98f5b31bd

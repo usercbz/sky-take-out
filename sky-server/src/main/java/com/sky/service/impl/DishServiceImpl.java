@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -128,7 +129,7 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
 
         if (flavors != null && flavors.size() != 0) {
             //添加口味
-            dishFlavorService.addDishFlavors(dishId,flavors);
+            dishFlavorService.addDishFlavors(dishId, flavors);
         }
 
         //修改菜品
@@ -153,5 +154,10 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
             dishFlavorService.deleteFlavorsByDishId(Long.valueOf(id));
         }
         return Result.success();
+    }
+
+    @Override
+    public Result<List<DishVO>> getDishVOByCategoryId(Long categoryId) {
+        return Result.success(baseMapper.getDishesByCategoryId(categoryId));
     }
 }
