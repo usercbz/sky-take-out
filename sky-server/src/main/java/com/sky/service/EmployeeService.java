@@ -13,20 +13,21 @@ public interface EmployeeService extends IService<Employee> {
 
     /**
      * 员工登录
+     *
      * @param employeeLoginDTO
      * @return
      */
     Employee login(EmployeeLoginDTO employeeLoginDTO);
 
-    Result<PageResult> queryEmployeePage(EmployeePageQueryDTO employeePageQueryDTO);
+    PageResult queryEmployeePage(EmployeePageQueryDTO employeePageQueryDTO);
 
-    Result<Object> saveEmployee(EmployeeDTO employeeDTO);
+    void saveEmployee(EmployeeDTO employeeDTO);
 
-    Result<String> updateEmployeeStatusById(Long id, Integer status);
+    void updateEmployeeStatusById(Long id, Integer status);
 
-    Result<Employee> queryEmployeeById(Long id);
+    Employee queryEmployeeById(Long id);
 
-    Result<String> editEmployeeInfo(EmployeeDTO employeeDTO);
+    void editEmployeeInfo(EmployeeDTO employeeDTO);
 
-    Result<String> updatePassword(PasswordEditDTO passwordEditDTO);
+    void updatePassword(PasswordEditDTO passwordEditDTO);
 }

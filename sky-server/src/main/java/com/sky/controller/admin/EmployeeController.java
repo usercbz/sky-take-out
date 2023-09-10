@@ -84,7 +84,8 @@ public class EmployeeController {
     @GetMapping("page")
     @ApiOperation("员工信息分页")
     public Result<PageResult> queryPage(EmployeePageQueryDTO employeePageQueryDTO) {
-        return employeeService.queryEmployeePage(employeePageQueryDTO);
+        PageResult employeePage = employeeService.queryEmployeePage(employeePageQueryDTO);
+        return Result.success(employeePage);
 
     }
 
@@ -97,7 +98,8 @@ public class EmployeeController {
     @PostMapping
     @ApiOperation("新增员工")
     public Result<Object> addEmployee(@RequestBody EmployeeDTO employeeDTO) {
-        return employeeService.saveEmployee(employeeDTO);
+        employeeService.saveEmployee(employeeDTO);
+        return Result.success();
     }
 
     /**
@@ -109,14 +111,16 @@ public class EmployeeController {
     @PostMapping("status/{status}")
     @ApiOperation("修改账号状态")
     public Result<String> editStatusById(Long id, @PathVariable Integer status) {
-        return employeeService.updateEmployeeStatusById(id, status);
+        employeeService.updateEmployeeStatusById(id,status);
+        return Result.success();
     }
 
 
     @GetMapping("{id}")
     @ApiOperation("根据员工id查询")
     public Result<Employee> getEmployeeById(@PathVariable Long id) {
-        return employeeService.queryEmployeeById(id);
+        Employee employee = employeeService.queryEmployeeById(id);
+        return Result.success(employee);
     }
 
     /**
@@ -127,7 +131,8 @@ public class EmployeeController {
     @PutMapping
     @ApiOperation("修改员工信息")
     public Result<String> editEmployeeInfo(@RequestBody EmployeeDTO employeeDTO) {
-        return employeeService.editEmployeeInfo(employeeDTO);
+        employeeService.editEmployeeInfo(employeeDTO);
+        return Result.success();
     }
 
     /**
@@ -138,6 +143,7 @@ public class EmployeeController {
     @PutMapping("editPassword")
     @ApiOperation("修改账号密码")
     public Result<String> editPassword(@RequestBody PasswordEditDTO passwordEditDTO) {
-        return employeeService.updatePassword(passwordEditDTO);
+        employeeService.updatePassword(passwordEditDTO);
+        return Result.success();
     }
 }

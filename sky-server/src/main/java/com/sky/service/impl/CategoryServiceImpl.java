@@ -10,9 +10,10 @@ import com.sky.entity.Category;
 import com.sky.entity.Dish;
 import com.sky.entity.Setmeal;
 import com.sky.exception.DeletionNotAllowedException;
+import com.sky.exception.EditFailedException;
+import com.sky.exception.SaveFailedException;
 import com.sky.mapper.CategoryMapper;
 import com.sky.result.PageResult;
-import com.sky.result.Result;
 import com.sky.service.CategoryService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
      * @return
      */
     @Override
-    public Result<PageResult> queryPage(CategoryPageQueryDTO categoryPageQueryDTO) {
+    public PageResult queryPage(CategoryPageQueryDTO categoryPageQueryDTO) {
         String name = categoryPageQueryDTO.getName();
         Integer type = categoryPageQueryDTO.getType();
 
@@ -59,7 +60,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
         //查询分页数据
         Page<Category> categoryPage = page(new Page<>(categoryPageQueryDTO.getPage(), categoryPageQueryDTO.getPageSize()), queryWrapper);
 
-        return Result.success(new PageResult(categoryPage.getTotal(), categoryPage.getRecords()));
+        return new PageResult(categoryPage.getTotal(), categoryPage.getRecords());
     }
 
     /**
@@ -69,55 +70,53 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
      * @return
      */
     @Override
-    public Result<String> addCategory(CategoryDTO categoryDTO) {
+    public void addCategory(CategoryDTO categoryDTO) {
 
         Category category = new Category();
         //拷贝属性
         BeanUtils.copyProperties(categoryDTO, category);
 
         if (!save(category)) {
-            return Result.error(MessageConstant.ADD_FAIL);
+            throw new SaveFailedException(MessageConstant.ADD_FAIL);
         }
 
-        return Result.success();
     }
 
     @Override
-    public Result<List<Category>> queryListByType(Integer type) {
+    public List<Category> queryListByType(Integer type) {
+
         LambdaQueryWrapper<Category> categoryLambdaQueryWrapper = null;
         if (type != null) {
             categoryLambdaQueryWrapper = new LambdaQueryWrapper<>();
             categoryLambdaQueryWrapper.eq(Category::getType, type);
         }
-        return Result.success(list(categoryLambdaQueryWrapper));
+        return list(categoryLambdaQueryWrapper);
     }
 
     @Override
-    public Result<String> updateStatusById(Integer status, Long id) {
+    public void updateStatusById(Integer status, Long id) {
         Category category = new Category();
         category.setId(id);
         category.setStatus(status);
 
         if (!updateById(category)) {
-            return Result.error(MessageConstant.EDIT_FAIL);
+            throw new EditFailedException(MessageConstant.EDIT_FAIL);
         }
-        return Result.success();
     }
 
     @Override
-    public Result<String> updateCategory(CategoryDTO categoryDTO) {
+    public void updateCategory(CategoryDTO categoryDTO) {
 
         Category category = new Category();
         BeanUtils.copyProperties(categoryDTO, category);
 
         if (!updateById(category)) {
-            return Result.error(MessageConstant.EDIT_FAIL);
+            throw new EditFailedException(MessageConstant.EDIT_FAIL);
         }
-        return Result.success();
     }
 
     @Override
-    public Result<String> removeCategoryById(Long id) {
+    public void removeCategoryById(Long id) {
         //查询是否有菜品或套餐有对它的引用
         List<Dish> dishes = dishService.getDishByCategoryId(id);
         List<Setmeal> setmeals = setmealService.getSetmealByCategoryId(id);
@@ -128,10 +127,8 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
 
         //删除
         if (!removeById(id)) {
-            return Result.error(UNKNOWN_ERROR);
+            throw new DeletionNotAllowedException(UNKNOWN_ERROR);
         }
-
-        return Result.success();
     }
 
 }

@@ -13,9 +13,7 @@ import com.sky.dto.EmployeeLoginDTO;
 import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.dto.PasswordEditDTO;
 import com.sky.entity.Employee;
-import com.sky.exception.AccountLockedException;
-import com.sky.exception.AccountNotFoundException;
-import com.sky.exception.PasswordErrorException;
+import com.sky.exception.*;
 import com.sky.mapper.EmployeeMapper;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
@@ -69,7 +67,7 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
 
 
     @Override
-    public Result<PageResult> queryEmployeePage(EmployeePageQueryDTO employeePageQueryDTO) {
+    public PageResult queryEmployeePage(EmployeePageQueryDTO employeePageQueryDTO) {
 
         log.info(employeePageQueryDTO.toString());
         String name = employeePageQueryDTO.getName();
@@ -84,11 +82,11 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
 
         Page<Employee> employeePage = page(new Page<>(page, pageSize), wrapper);
 
-        return Result.success(new PageResult(employeePage.getTotal(), employeePage.getRecords()));
+        return new PageResult(employeePage.getTotal(), employeePage.getRecords());
     }
 
     @Override
-    public Result<Object> saveEmployee(EmployeeDTO employeeDTO) {
+    public void saveEmployee(EmployeeDTO employeeDTO) {
 
         log.info(employeeDTO.toString());
 
@@ -100,46 +98,42 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
         //保存到数据库
         if (!save(employee)) {
             //失败
-            Result.error(ADD_FAIL);
+            throw new SaveFailedException(ADD_FAIL);
         }
-        //成功
-        return Result.success();
+
     }
 
     @Override
-    public Result<String> updateEmployeeStatusById(Long id, Integer status) {
+    public void updateEmployeeStatusById(Long id, Integer status) {
 
         Employee employee = new Employee();
         employee.setId(id);
         employee.setStatus(status);
 
         if (!updateById(employee)) {
-            return Result.error(EDIT_FAIL);
+            throw new EditFailedException(EDIT_FAIL);
         }
-        return Result.success();
     }
 
     @Override
-    public Result<Employee> queryEmployeeById(Long id) {
-        Employee employee = getById(id);
-        return Result.success(employee);
+    public Employee queryEmployeeById(Long id) {
+        return getById(id);
     }
 
     @Override
-    public Result<String> editEmployeeInfo(EmployeeDTO employeeDTO) {
+    public void editEmployeeInfo(EmployeeDTO employeeDTO) {
 
         Employee employee = new Employee();
         BeanUtils.copyProperties(employeeDTO, employee);
         //修改
         if (!updateById(employee)) {
             //失败
-            return Result.error(EDIT_FAIL);
+            throw new EditFailedException(EDIT_FAIL);
         }
-        return Result.success();
     }
 
     @Override
-    public Result<String> updatePassword(PasswordEditDTO passwordEditDTO) {
+    public void updatePassword(PasswordEditDTO passwordEditDTO) {
         Long empId = passwordEditDTO.getEmpId();
         if (empId == null) {
             empId = BaseContext.getCurrentId();
@@ -153,7 +147,7 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
 
         if (employee == null) {
             //密码错误
-            return Result.error(PASSWORD_ERROR);
+            throw new PasswordErrorException(PASSWORD_ERROR);
         }
 
         //旧密码正确，修改密码
@@ -162,10 +156,9 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
 
         if (!updateById(employee)) {
             //修改失败
-            return Result.error(EDIT_FAIL);
+            throw new EditFailedException(EDIT_FAIL);
         }
 
-        return Result.success();
     }
 
 }

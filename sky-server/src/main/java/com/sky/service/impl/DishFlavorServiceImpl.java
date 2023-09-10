@@ -28,4 +28,9 @@ public class DishFlavorServiceImpl extends ServiceImpl<DishFlavorMapper, DishFla
             save(flavor);
         }
     }
+
+    @Override
+    public List<DishFlavor> getDishFlavorByDishId(Long dishId) {
+        return list(new LambdaQueryWrapper<DishFlavor>().eq(DishFlavor::getDishId, dishId));
+    }
 }

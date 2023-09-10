@@ -21,6 +21,7 @@ public class CategoryController {
 
     @GetMapping("list")
     public Result<List<Category>> getCategoryList(Integer type) {
-        return categoryService.queryListByType(type);
+        List<Category> categories = categoryService.queryListByType(type);
+        return Result.success(categories);
     }
 }

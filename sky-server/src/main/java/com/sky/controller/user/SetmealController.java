@@ -1,5 +1,6 @@
 package com.sky.controller.user;
 
+import com.sky.constant.StatusConstant;
 import com.sky.entity.Dish;
 import com.sky.entity.Setmeal;
 import com.sky.entity.SetmealDish;
@@ -17,8 +18,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController("userSetmealController")
 @RequestMapping("/user/setmeal")
@@ -28,33 +29,21 @@ public class SetmealController {
     @Autowired
     private SetmealService setmealService;
 
-    @Autowired
-    private SetmealDishService setmealDishService;
-
-    @Autowired
-    private DishService dishService;
-
     @GetMapping("list")
     public Result<List<Setmeal>> getSetmealList(Long categoryId) {
 
         List<Setmeal> setmeals = setmealService.getSetmealByCategoryId(categoryId);
+        //查询起售的套餐
+        setmeals = setmeals.stream()
+                .filter(setmeal -> StatusConstant.ENABLE.equals(setmeal.getStatus()))
+                .collect(Collectors.toList());
         return Result.success(setmeals);
     }
 
     @GetMapping("dish/{id}")
     public Result<List<DishItemVO>> getDishItems(@PathVariable Long id) {
-        List<SetmealDish> setmealDishes = setmealDishService.queryDishBySetmealId(id);
-        ArrayList<DishItemVO> dishItemVOS = new ArrayList<>();
 
-        for (SetmealDish setmealDish : setmealDishes) {
-            Dish dish = dishService.getById(setmealDish.getDishId());
-            DishItemVO dishItemVO = new DishItemVO();
-            //拷贝属性
-            BeanUtils.copyProperties(dish, dishItemVO);
-            dishItemVO.setCopies(setmealDish.getCopies());
-
-            dishItemVOS.add(dishItemVO);
-        }
+        List<DishItemVO> dishItemVOS = setmealService.getSetmealDishItems(id);
 
         return Result.success(dishItemVOS);
     }

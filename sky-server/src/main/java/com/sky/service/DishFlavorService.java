@@ -10,4 +10,6 @@ public interface DishFlavorService extends IService<DishFlavor> {
     void deleteFlavorsByDishId(Long dishId);
 
     void addDishFlavors(Long dishId, List<DishFlavor> flavors);
+
+    List<DishFlavor> getDishFlavorByDishId(Long dishId);
 }

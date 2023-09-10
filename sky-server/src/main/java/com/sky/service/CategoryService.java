@@ -5,20 +5,20 @@ import com.sky.dto.CategoryDTO;
 import com.sky.dto.CategoryPageQueryDTO;
 import com.sky.entity.Category;
 import com.sky.result.PageResult;
-import com.sky.result.Result;
 
 import java.util.List;
 
 public interface CategoryService extends IService<Category> {
-    Result<PageResult> queryPage(CategoryPageQueryDTO categoryPageQueryDTO);
 
-    Result<String> addCategory(CategoryDTO categoryDTO);
+    PageResult queryPage(CategoryPageQueryDTO categoryPageQueryDTO);
 
-    Result<List<Category>> queryListByType(Integer type);
+    void addCategory(CategoryDTO categoryDTO);
 
-    Result<String> updateStatusById(Integer status, Long id);
+    List<Category> queryListByType(Integer type);
 
-    Result<String> updateCategory(CategoryDTO categoryDTO);
+    void updateStatusById(Integer status, Long id);
 
-    Result<String> removeCategoryById(Long id);
+    void updateCategory(CategoryDTO categoryDTO);
+
+    void removeCategoryById(Long id);
 }

@@ -26,7 +26,8 @@ public class SetmealController {
      */
     @GetMapping("page")
     public Result<PageResult> getSetmealPage(SetmealPageQueryDTO pageQueryDTO) {
-        return setmealService.queryPage(pageQueryDTO);
+        PageResult queryPage = setmealService.queryPage(pageQueryDTO);
+        return Result.success(queryPage);
     }
 
     /**
@@ -37,7 +38,8 @@ public class SetmealController {
      */
     @GetMapping("/{id}")
     public Result<SetmealVO> getSetmealById(@PathVariable Long id) {
-        return setmealService.querySetmealById(id);
+        SetmealVO setmealVO = setmealService.querySetmealById(id);
+        return Result.success(setmealVO);
     }
 
     /**
@@ -48,7 +50,8 @@ public class SetmealController {
      */
     @PostMapping
     public Result<Object> addSetmeal(@RequestBody SetmealDTO setmealDTO) {
-        return setmealService.saveSetmeal(setmealDTO);
+        setmealService.saveSetmeal(setmealDTO);
+        return Result.success();
     }
 
     /**
@@ -59,27 +62,32 @@ public class SetmealController {
      */
     @PutMapping
     public Result<Object> editSetmealInfo(@RequestBody SetmealDTO setmealDTO) {
-        return setmealService.updateSetmeal(setmealDTO);
+        setmealService.updateSetmeal(setmealDTO);
+        return Result.success();
     }
 
     /**
      * 套餐的起售、停售
+     *
      * @param id
      * @param status
      * @return
      */
     @PostMapping("status/{status}")
     public Result<Object> editSetmealStatus(Long id, @PathVariable Integer status) {
-        return setmealService.updateStatus(id, status);
+        setmealService.updateStatus(id, status);
+        return Result.success();
     }
 
     /**
      * 删除套餐
+     *
      * @param ids
      * @return
      */
     @DeleteMapping
     public Result<Object> deleteSetmealByIds(String ids){
-        return setmealService.removeSetmealByIds(ids);
+        setmealService.removeSetmealByIds(ids);
+        return Result.success();
     }
 }

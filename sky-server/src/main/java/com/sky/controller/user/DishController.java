@@ -17,7 +17,8 @@ public class DishController {
 
     @RequestMapping("list")
     public Result<List<DishVO>> browseDish(Long categoryId) {
-        return dishService.getDishVOByCategoryId(categoryId);
+        List<DishVO> dishVOS = dishService.getDishVOByCategoryId(categoryId);
+        return Result.success(dishVOS);
     }
 
 

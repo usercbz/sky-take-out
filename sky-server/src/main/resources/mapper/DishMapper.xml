@@ -3,37 +3,4 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.sky.mapper.DishMapper">
 
-    <resultMap id="dishVo" type="com.sky.vo.DishVO">
-
-        <id property="id" column="id"/>
-        <result property="name" column="name"/>
-        <result property="description" column="description"/>
-        <result property="categoryName" column="category_name"/>
-        <result property="image" column="image"/>
-        <result property="price" column="price"/>
-        <result property="categoryId" column="category_id"/>
-        <result property="updateTime" column="update_time"/>
-        <result property="status" column="status"/>
-
-        <collection property="flavors" ofType="com.sky.entity.DishFlavor">
-            <id property="id" column="id"/>
-            <result property="dishId" column="dish_id"/>
-            <result property="name" column="name"/>
-            <result property="value" column="value"/>
-        </collection>
-    </resultMap>
-
-
-    <select id="getDishById" resultMap="dishVo">
-        select *
-        from dish
-                 left join dish_flavor df on dish.id = df.dish_id
-        where dish.id = #{id}
-    </select>
-    <select id="getDishesByCategoryId" resultMap="dishVo">
-        select *
-        from dish
-                 left join dish_flavor df on dish.id = df.dish_id
-        where dish.category_id = #{categoryId}
-    </select>
 </mapper>

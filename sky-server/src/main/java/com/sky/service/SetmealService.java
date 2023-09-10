@@ -6,6 +6,7 @@ import com.sky.dto.SetmealPageQueryDTO;
 import com.sky.entity.Setmeal;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
+import com.sky.vo.DishItemVO;
 import com.sky.vo.SetmealVO;
 
 import java.util.List;
@@ -14,15 +15,17 @@ public interface SetmealService extends IService<Setmeal> {
 
     List<Setmeal> getSetmealByCategoryId(Long categoryId);
 
-    Result<PageResult> queryPage(SetmealPageQueryDTO pageQueryDTO);
+    PageResult queryPage(SetmealPageQueryDTO pageQueryDTO);
 
-    Result<SetmealVO> querySetmealById(Long id);
+    SetmealVO querySetmealById(Long id);
 
-    Result<Object> saveSetmeal(SetmealDTO setmealDTO);
+    void saveSetmeal(SetmealDTO setmealDTO);
 
-    Result<Object> updateSetmeal(SetmealDTO setmealDTO);
+    void updateSetmeal(SetmealDTO setmealDTO);
 
-    Result<Object> updateStatus(Long id, Integer status);
+    void updateStatus(Long id, Integer status);
 
-    Result<Object> removeSetmealByIds(String ids);
+    void removeSetmealByIds(String ids);
+
+    List<DishItemVO> getSetmealDishItems(Long setmealId);
 }

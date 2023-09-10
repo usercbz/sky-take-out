@@ -27,7 +27,8 @@ public class DishController {
      */
     @RequestMapping("page")
     public Result<PageResult> getDishPage(DishPageQueryDTO dishPageQueryDTO) {
-        return dishService.queryDishPage(dishPageQueryDTO);
+        PageResult dishPage = dishService.queryDishPage(dishPageQueryDTO);
+        return Result.success(dishPage);
     }
 
     /**
@@ -38,7 +39,8 @@ public class DishController {
      */
     @GetMapping("/{id}")
     public Result<DishVO> getDishById(@PathVariable Long id) {
-        return dishService.queryDishById(id);
+        DishVO dishVO = dishService.queryDishById(id);
+        return Result.success(dishVO);
     }
 
     /**
@@ -49,7 +51,8 @@ public class DishController {
      */
     @GetMapping("list")
     public Result<List<Dish>> getDishListByCategory(Long categoryId) {
-        return dishService.queryDishListByCategoryId(categoryId);
+        List<Dish> dishes = dishService.queryDishListByCategoryId(categoryId);
+        return Result.success(dishes);
     }
 
     /**
@@ -60,7 +63,8 @@ public class DishController {
      */
     @PostMapping
     public Result<String> addDish(@RequestBody DishDTO dishDTO) {
-        return dishService.addDish(dishDTO);
+        dishService.addDish(dishDTO);
+        return Result.success();
     }
 
     /**
@@ -72,17 +76,20 @@ public class DishController {
      */
     @PostMapping("status/{status}")
     public Result<String> editDishStatus(Long id, @PathVariable Integer status) {
-        return dishService.updateStatusById(id, status);
+        dishService.updateStatusById(id, status);
+        return Result.success();
     }
 
 
     @PutMapping
     public Result<String> editDishInfo(@RequestBody DishDTO dishDTO) {
-        return dishService.updateDish(dishDTO);
+        dishService.updateDish(dishDTO);
+        return Result.success();
     }
 
     @DeleteMapping
     public Result<String> deleteDish(String ids) {
-        return dishService.removeDishById(ids);
+        dishService.removeDishById(ids);
+        return Result.success();
     }
 }
