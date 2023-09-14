@@ -64,8 +64,7 @@ public class WeChatPayUtil {
                     .withWechatPay(wechatPayCertificates);
 
             // 通过WechatPayHttpClientBuilder构造的HttpClient，会自动的处理签名和验签
-            CloseableHttpClient httpClient = builder.build();
-            return httpClient;
+            return builder.build();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             return null;
@@ -90,8 +89,7 @@ public class WeChatPayUtil {
 
         CloseableHttpResponse response = httpClient.execute(httpPost);
         try {
-            String bodyAsString = EntityUtils.toString(response.getEntity());
-            return bodyAsString;
+            return EntityUtils.toString(response.getEntity());
         } finally {
             httpClient.close();
             response.close();
@@ -114,8 +112,7 @@ public class WeChatPayUtil {
 
         CloseableHttpResponse response = httpClient.execute(httpGet);
         try {
-            String bodyAsString = EntityUtils.toString(response.getEntity());
-            return bodyAsString;
+            return EntityUtils.toString(response.getEntity());
         } finally {
             httpClient.close();
             response.close();

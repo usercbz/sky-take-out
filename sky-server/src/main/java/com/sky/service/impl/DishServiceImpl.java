@@ -10,16 +10,15 @@ import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
 import com.sky.entity.Dish;
 import com.sky.entity.DishFlavor;
+import com.sky.entity.SetmealDish;
+import com.sky.exception.DeletionNotAllowedException;
 import com.sky.exception.EditFailedException;
 import com.sky.exception.SaveFailedException;
 import com.sky.mapper.DishMapper;
 import com.sky.result.PageResult;
-import com.sky.service.CategoryService;
-import com.sky.service.DishFlavorService;
-import com.sky.service.DishService;
+import com.sky.service.*;
 import com.sky.vo.DishVO;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -35,16 +34,19 @@ import static com.sky.constant.RedisConstant.DISH_CACHE_KEY;
 @Service
 public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements DishService {
 
-    @Autowired
-    private DishFlavorService dishFlavorService;
+    private final DishFlavorService dishFlavorService;
+    private final CategoryService categoryService;
+    private final SetmealDishService setmealDishService;
 
-    @Autowired
-    private CategoryService categoryService;
+    public DishServiceImpl(DishFlavorService dishFlavorService, CategoryService categoryService, SetmealDishService setmealDishService) {
+        this.dishFlavorService = dishFlavorService;
+        this.categoryService = categoryService;
+        this.setmealDishService = setmealDishService;
+    }
 
     @Override
     public List<Dish> getDishByCategoryId(Long categoryId) {
-        LambdaQueryWrapper<Dish> wrapper = new LambdaQueryWrapper<Dish>().eq(Dish::getCategoryId, categoryId);
-        return list(wrapper);
+        return list(Wrappers.lambdaQuery(Dish.class).eq(Dish::getCategoryId, categoryId));
     }
 
     @Override
@@ -70,7 +72,6 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
 
         Page<Dish> page = page(new Page<>(dishPageQueryDTO.getPage(), dishPageQueryDTO.getPageSize()), dishLambdaQueryWrapper);
 
-
         return new PageResult(page.getTotal(), page.getRecords());
     }
 
@@ -79,11 +80,6 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         //查询菜品数据
         Dish dish = getById(id);
         return getDishVO(dish);
-    }
-
-    @Override
-    public List<Dish> queryDishListByCategoryId(Long categoryId) {
-        return list(Wrappers.lambdaQuery(Dish.class).eq(Dish::getCategoryId, categoryId));
     }
 
 
@@ -159,6 +155,17 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         List<String> idList = Arrays.stream(ids.split(",")).collect(Collectors.toList());
 
         for (String id : idList) {
+
+            //判断
+            //是否是起售状态
+            if (getById(id).getStatus() == StatusConstant.ENABLE) {
+                throw new DeletionNotAllowedException(MessageConstant.DISH_ON_SALE);
+            }
+            //是否有套餐包含此菜品
+            List<SetmealDish> setmealDishes = setmealDishService.querySetmealByDishId(Long.valueOf(id));
+            if (setmealDishes == null || setmealDishes.size() == 0) {
+                throw new DeletionNotAllowedException(MessageConstant.DISH_BE_RELATED_BY_SETMEAL);
+            }
             //删除菜品
             removeById(id);
             //删除口味
@@ -170,24 +177,21 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
     @Cacheable(cacheNames = DISH_CACHE_KEY, key = "#categoryId")
     public List<DishVO> getDishVOByCategoryId(Long categoryId) {
         //根据categoryId查询dish集合
-        List<Dish> dishes = queryDishListByCategoryId(categoryId)
+        List<Dish> dishes = getDishByCategoryId(categoryId)
                 .stream()
                 .filter(dish -> StatusConstant.ENABLE.equals(dish.getStatus()))
                 .collect(Collectors.toList());
         //构建dishVO
         ArrayList<DishVO> list = new ArrayList<>();
-        for (Dish dish : dishes) {
-            DishVO dishVO = getDishVO(dish);
-            list.add(dishVO);
-        }
+        dishes.stream().map(this::getDishVO).forEach(list::add);
         return list;
     }
 
     /**
      * 构建dishVO
      *
-     * @param dish
-     * @return
+     * @param dish 菜品对象
+     * @return dishVO对象
      */
     private DishVO getDishVO(Dish dish) {
         //获取菜品口味

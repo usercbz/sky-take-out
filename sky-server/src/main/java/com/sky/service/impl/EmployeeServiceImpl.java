@@ -16,7 +16,6 @@ import com.sky.entity.Employee;
 import com.sky.exception.*;
 import com.sky.mapper.EmployeeMapper;
 import com.sky.result.PageResult;
-import com.sky.result.Result;
 import com.sky.service.EmployeeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -56,7 +55,7 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
             throw new PasswordErrorException(PASSWORD_ERROR);
         }
 
-        if (employee.getStatus() == StatusConstant.DISABLE) {
+        if (employee.getStatus().equals(StatusConstant.DISABLE)) {
             //账号被锁定
             throw new AccountLockedException(MessageConstant.ACCOUNT_LOCKED);
         }
@@ -156,7 +155,7 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
 
         if (!updateById(employee)) {
             //修改失败
-            throw new EditFailedException(EDIT_FAIL);
+            throw new PasswordEditFailedException(PASSWORD_EDIT_FAILED);
         }
 
     }

@@ -1,5 +1,6 @@
 package com.sky.controller.user;
 
+import com.sky.constant.StatusConstant;
 import com.sky.entity.Category;
 import com.sky.result.Result;
 import com.sky.service.CategoryService;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController("userCategoryController")
 @RequestMapping("/user/category")
@@ -22,6 +24,10 @@ public class CategoryController {
     @GetMapping("list")
     public Result<List<Category>> getCategoryList(Integer type) {
         List<Category> categories = categoryService.queryListByType(type);
+        //过滤
+        categories = categories.stream()
+                .filter(category -> category.getStatus() == StatusConstant.ENABLE)
+                .collect(Collectors.toList());
         return Result.success(categories);
     }
 }

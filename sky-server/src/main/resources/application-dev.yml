@@ -23,5 +23,5 @@ sky:
 
     # 微信小程序配置
   wechat:
-    appid: ${}
-    secret: ${}
+    appid: wx34b67fbd8a261eca
+    secret:

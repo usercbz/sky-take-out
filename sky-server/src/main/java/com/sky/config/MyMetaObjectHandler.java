@@ -7,6 +7,8 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
+import static com.sky.constant.AutoFillConstant.*;
+
 /**
  * MP自动填充
  */
@@ -14,15 +16,15 @@ import java.time.LocalDateTime;
 public class MyMetaObjectHandler implements MetaObjectHandler {
     @Override
     public void insertFill(MetaObject metaObject) {
-        setFieldValByName("createTime", LocalDateTime.now(), metaObject);
-        setFieldValByName("updateTime", LocalDateTime.now(), metaObject);
-        setFieldValByName("createUser", BaseContext.getCurrentId(), metaObject);
-        setFieldValByName("updateUser", BaseContext.getCurrentId(), metaObject);
+        setFieldValByName(CREATE_TIME, LocalDateTime.now(), metaObject);
+        setFieldValByName(UPDATE_TIME, LocalDateTime.now(), metaObject);
+        setFieldValByName(CREATE_USER, BaseContext.getCurrentId(), metaObject);
+        setFieldValByName(UPDATE_USER, BaseContext.getCurrentId(), metaObject);
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
-        setFieldValByName("updateTime", LocalDateTime.now(), metaObject);
-        setFieldValByName("updateUser", BaseContext.getCurrentId(), metaObject);
+        setFieldValByName(UPDATE_TIME, LocalDateTime.now(), metaObject);
+        setFieldValByName(UPDATE_USER, BaseContext.getCurrentId(), metaObject);
     }
 }

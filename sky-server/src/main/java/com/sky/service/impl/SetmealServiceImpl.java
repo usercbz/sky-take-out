@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sky.constant.MessageConstant;
+import com.sky.constant.StatusConstant;
 import com.sky.dto.SetmealDTO;
 import com.sky.dto.SetmealPageQueryDTO;
 import com.sky.entity.Category;
@@ -11,7 +12,9 @@ import com.sky.entity.Dish;
 import com.sky.entity.Setmeal;
 import com.sky.entity.SetmealDish;
 import com.sky.exception.BaseException;
+import com.sky.exception.DeletionNotAllowedException;
 import com.sky.exception.SaveFailedException;
+import com.sky.exception.SetmealEnableFailedException;
 import com.sky.mapper.SetmealMapper;
 import com.sky.result.PageResult;
 import com.sky.service.CategoryService;
@@ -139,6 +142,16 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal> impl
 
     @Override
     public void updateStatus(Long id, Integer status) {
+
+        if (StatusConstant.ENABLE == status) {
+            List<SetmealDish> setmealDishes = setmealDishService.queryDishBySetmealId(id);
+            for (SetmealDish setmealDish : setmealDishes) {
+                Dish dish = dishService.getById(setmealDish.getDishId());
+                if (dish.getStatus() == StatusConstant.DISABLE) {
+                    throw new SetmealEnableFailedException(MessageConstant.SETMEAL_ENABLE_FAILED);
+                }
+            }
+        }
         updateById(Setmeal.builder()
                 .id(id)
                 .status(status)
@@ -150,6 +163,11 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal> impl
     public void removeSetmealByIds(String ids) {
         //分割id
         for (String id : ids.split(",")) {
+
+            //判断套餐状态
+            if (getById(id).getStatus() == StatusConstant.ENABLE) {
+                throw new DeletionNotAllowedException(MessageConstant.SETMEAL_ON_SALE);
+            }
             //删除套餐
             removeById(id);
             //删除套餐菜品关系

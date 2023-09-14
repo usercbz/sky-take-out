@@ -14,7 +14,6 @@ import com.sky.utils.JwtUtil;
 import com.sky.vo.EmployeeLoginVO;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -28,13 +27,16 @@ import java.util.Map;
 @Slf4j
 public class EmployeeController {
 
-    @Autowired
-    private EmployeeService employeeService;
-    @Autowired
-    private JwtProperties jwtProperties;
+    private final EmployeeService employeeService;
+    private final JwtProperties jwtProperties;
+
+    public EmployeeController(EmployeeService employeeService, JwtProperties jwtProperties) {
+        this.employeeService = employeeService;
+        this.jwtProperties = jwtProperties;
+    }
 
     /**
-     * 登录
+     * 登录接口
      *
      * @param employeeLoginDTO
      * @return
@@ -104,6 +106,7 @@ public class EmployeeController {
 
     /**
      * 启用/禁用账号
+     *
      * @param id
      * @param status
      * @return
@@ -111,7 +114,7 @@ public class EmployeeController {
     @PostMapping("status/{status}")
     @ApiOperation("修改账号状态")
     public Result<String> editStatusById(Long id, @PathVariable Integer status) {
-        employeeService.updateEmployeeStatusById(id,status);
+        employeeService.updateEmployeeStatusById(id, status);
         return Result.success();
     }
 
@@ -125,6 +128,7 @@ public class EmployeeController {
 
     /**
      * 修改员工信息
+     *
      * @param employeeDTO
      * @return
      */
@@ -137,6 +141,7 @@ public class EmployeeController {
 
     /**
      * 修改账号密码
+     *
      * @param passwordEditDTO
      * @return
      */

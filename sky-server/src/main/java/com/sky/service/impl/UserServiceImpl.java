@@ -2,6 +2,7 @@ package com.sky.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sky.constant.JwtClaimsConstant;
@@ -20,7 +21,9 @@ import com.sky.vo.UserLoginVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -68,8 +71,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return Result.success(loginVO);
     }
 
+    @Override
+    public List<User> getUsersByTime(LocalDateTime begin, LocalDateTime end) {
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>(User.class)
+                .le(User::getCreateTime, end);
+        if (begin != null) {
+            queryWrapper.ge(User::getCreateTime, begin);
+        }
+        return list(queryWrapper);
+
+    }
+
     /**
      * 获取openID
+     *
      * @param code
      * @return
      */

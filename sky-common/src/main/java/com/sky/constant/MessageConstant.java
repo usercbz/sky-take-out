@@ -26,5 +26,4 @@ public class MessageConstant {
     public static final String ADD_FAIL = "添加失败";
     public static final String EDIT_FAIL = "修改失败";
 
-
 }
