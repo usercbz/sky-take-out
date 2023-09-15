@@ -319,7 +319,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
     public List<GoodsSalesDTO> salesTop10Report(LocalDateTime begin, LocalDateTime end) {
         /*
         获取销售排名
-        select od.name,sum(number) as  number
+        select od.name,sum(number) as number
         from order_detail od,orders o
         where od.order_id = orders.id
         and orders.status = 5

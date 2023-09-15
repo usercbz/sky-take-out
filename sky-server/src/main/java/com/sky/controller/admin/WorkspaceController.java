@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 @RestController
 @Slf4j
 @RequestMapping("/admin/workspace")
@@ -27,7 +31,10 @@ public class WorkspaceController {
      */
     @GetMapping("businessData")
     public Result<BusinessDataVO> getBusinessData() {
-        BusinessDataVO businessDataVO = workspaceService.getBusinessData();
+        LocalDate date = LocalDate.now();
+        BusinessDataVO businessDataVO = workspaceService.getBusinessData(
+                LocalDateTime.of(date, LocalTime.MIN),
+                LocalDateTime.of(date, LocalTime.MAX));
         return Result.success(businessDataVO);
     }
 
@@ -39,13 +46,13 @@ public class WorkspaceController {
 
     @GetMapping("overviewDishes")
     public Result<DishOverViewVO> getOverviewDishes() {
-        DishOverViewVO dishOverViewVO =  workspaceService.getOverviewDishes();
+        DishOverViewVO dishOverViewVO = workspaceService.getOverviewDishes();
         return Result.success(dishOverViewVO);
     }
 
     @GetMapping("overviewSetmeals")
     public Result<SetmealOverViewVO> getOverviewSetmeal() {
-        SetmealOverViewVO setmealOverViewVO= workspaceService.getOverviewSetmeal();
+        SetmealOverViewVO setmealOverViewVO = workspaceService.getOverviewSetmeal();
         return Result.success(setmealOverViewVO);
     }
 }

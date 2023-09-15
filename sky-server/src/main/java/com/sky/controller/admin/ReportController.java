@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
+
 
 @RestController
 @Slf4j
@@ -67,8 +69,8 @@ public class ReportController {
     }
 
     @GetMapping("export")
-    public Result<Object> export() {
-//        reportService.export();
+    public Result<Object> export(HttpServletResponse response) {
+        reportService.export(response);
         return Result.success();
     }
 

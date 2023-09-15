@@ -31,32 +31,27 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     private SetmealService setmealService;
 
     /**
-     * 查询今日运营数据
+     * 查询运营数据
      *
      * @return
      */
     @Override
-    public BusinessDataVO getBusinessData() {
-        //日期
-        LocalDate date = LocalDate.now();
-        LocalDateTime begin = LocalDateTime.of(date, LocalTime.MIN);
-        LocalDateTime end = LocalDateTime.of(date, LocalTime.MAX);
+    public BusinessDataVO getBusinessData(LocalDateTime begin,LocalDateTime end) {
 
         Double turnover;//营业额
         int validOrderCount;//有效订单数
         double orderCompletionRate;//订单完成率
         double unitPrice;//平均客单价
 
-        //获取当天营业额
+        //获取营业额
         turnover = orderService.getAmountCount(begin, end);
-
         if (turnover == null || turnover == 0D) {
             turnover = 0D;
             validOrderCount = 0;
             orderCompletionRate = 0D;
             unitPrice = 0D;
         } else {
-            //获取当天订单数
+            //获取订单数
             List<Orders> orders = orderService.getOrdersByDate(begin, end);
             int orderCount = orders.size();
             //有效订单数
@@ -68,7 +63,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
             //客单价
             unitPrice = turnover / validOrderCount;
         }
-        //获取今日新增用户
+        //获取新增用户
         List<User> users = userService.getUsersByTime(begin, end);
 
         return BusinessDataVO.builder()

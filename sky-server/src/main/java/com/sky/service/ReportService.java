@@ -6,6 +6,8 @@ import com.sky.vo.SalesTop10ReportVO;
 import com.sky.vo.TurnoverReportVO;
 import com.sky.vo.UserReportVO;
 
+import javax.servlet.http.HttpServletResponse;
+
 
 public interface ReportService {
 
@@ -41,4 +43,11 @@ public interface ReportService {
      * @return
      */
     SalesTop10ReportVO salesTop10Report(DataOverViewQueryDTO dataOverViewQueryDTO);
+
+    /**
+     * 导出运营数据
+     *
+     * @param response
+     */
+    void export(HttpServletResponse response);
 }

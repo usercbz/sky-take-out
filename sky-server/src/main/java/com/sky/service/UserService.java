@@ -18,7 +18,7 @@ public interface UserService extends IService<User> {
     Result<UserLoginVO> login(UserLoginDTO loginDTO);
 
     /**
-     * 根据时间
+     * 根据创建时间获取用户
      * @param begin
      * @param end
      * @return
